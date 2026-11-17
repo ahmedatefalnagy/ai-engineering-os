@@ -68,7 +68,7 @@ class ModelRouter:
             matching = list(models)
 
         # Sort by cost (quality-first with cost-awareness: pick lowest cost within the required tier)
-        matching.sort(key=lambda m: (m.cost_per_million_input + m.cost_per_million_output))
+        matching.sort(key=lambda m: m.cost_per_million_input + m.cost_per_million_output)
         return matching[0]
 
     def execute_completion(
@@ -80,9 +80,8 @@ class ModelRouter:
         budget_limit_usd: float | None = None,
     ) -> ProviderResponse:
         # 1. Budget enforcement check
-        if (
-            budget_limit_usd is not None
-            and not self.cost_tracker.check_budget_limit(project_id, budget_limit_usd)
+        if budget_limit_usd is not None and not self.cost_tracker.check_budget_limit(
+            project_id, budget_limit_usd
         ):
             current_cost = self.cost_tracker.get_project_total_cost(project_id)
             raise BudgetExceededError(project_id, current_cost, budget_limit_usd)

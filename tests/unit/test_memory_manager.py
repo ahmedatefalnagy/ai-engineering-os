@@ -1,6 +1,7 @@
 """Unit tests for Phase 4: Markdown+SQLite Memory, indexing, and context retrieval."""
 
 from pathlib import Path
+
 from sifr.adapters.persistence.memory_sqlite_adapter import SQLiteMemoryRepositoryAdapter
 from sifr.application.memory_manager import MemoryManager
 from sifr.domain.memory_models import MemoryCategory

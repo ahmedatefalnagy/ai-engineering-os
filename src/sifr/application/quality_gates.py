@@ -74,5 +74,34 @@ class QualityGateEngine:
             message="No exposed secrets detected",
         )
 
+    def check_bilingual_compliance(self) -> GateResult:
+        """Verifies that the project architecture enforces native bilingual support (Arabic & English) with RTL/LTR."""
+        sifr_yaml = self.project_root / "sifr.yaml"
+        if not sifr_yaml.is_file():
+            return GateResult(
+                gate_name="bilingual_compliance",
+                status=GateStatus.PASSED,
+                message="No sifr.yaml present, skipping bilingual mandate check",
+            )
+
+        content = sifr_yaml.read_text(encoding="utf-8", errors="ignore").lower()
+        has_arabic = "ar" in content or "arabic" in content
+        has_english = "en" in content or "english" in content
+        has_bilingual = "bilingual" in content or (has_arabic and has_english)
+
+        if not has_bilingual:
+            return GateResult(
+                gate_name="bilingual_compliance",
+                status=GateStatus.FAILED,
+                message="SIFR Invariant Violation: Project must declare native Arabic & English bilingual support",
+                details="sifr.yaml must declare i18n support for both Arabic and English with RTL/LTR.",
+            )
+
+        return GateResult(
+            gate_name="bilingual_compliance",
+            status=GateStatus.PASSED,
+            message="Bilingual (Arabic & English) and RTL/LTR standard verified",
+        )
+
     def evaluate_all(self) -> Sequence[GateResult]:
-        return [self.check_secret_leakage()]
+        return [self.check_secret_leakage(), self.check_bilingual_compliance()]

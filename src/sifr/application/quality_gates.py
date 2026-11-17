@@ -30,11 +30,17 @@ class QualityGateEngine:
         self.project_root = project_root
 
     def check_secret_leakage(self) -> GateResult:
-        """Scans project files for hardcoded API keys, JWTs, or database passwords."""
+        """Scans project files for hardcoded API keys, JWTs, or database passwords in code and config files."""
         patterns = [
+            # Matches code assignments: API_KEY = "..."
             (
-                r"(?i)(api[_-]?(key|secret)|secret|password|token)[a-z0-9_-]*\s*=\s*['\"][^'\"]{10,}['\"]",
-                "Secret token detected in variable assignment",
+                r"(?i)(api[_-]?(key|secret)|secret|password|token)[a-z0-9_-]*\s*[:=]\s*['\"][^'\"]{10,}['\"]",
+                "Secret token detected in assignment",
+            ),
+            # Matches JSON / YAML quoted keys: "Password": "..."
+            (
+                r"(?i)['\"](api[_-]?(key|secret)|secret|password|token)[^'\"]*['\"]\s*[:=]\s*['\"][^'\"]{10,}['\"]",
+                "Secret token detected in JSON or quoted key",
             ),
             (r"-----BEGIN (RSA|OPENSSH|PRIVATE) KEY-----", "Private key detected"),
         ]

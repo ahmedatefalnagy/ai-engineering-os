@@ -3,9 +3,8 @@
 Ensures that Domain and Ports never import from Adapters or Frameworks.
 """
 
-import importlib
 import inspect
-from pathlib import Path
+
 import sifr.domain.models
 import sifr.ports.contracts
 

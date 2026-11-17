@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+
 import yaml
 from pydantic import BaseModel, Field
 
@@ -13,6 +14,7 @@ from sifr.ports.contracts import ConfigPort
 
 class ProjectConfigSchema(BaseModel):
     """Pydantic validation schema for project YAML files."""
+
     name: str = Field(min_length=1)
     version: str = Field(default="0.1.0")
     technology_profile: str = Field(default="generic")

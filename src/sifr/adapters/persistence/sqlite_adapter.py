@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import json
-from pathlib import Path
 import sqlite3
-from typing import Sequence
+from collections.abc import Sequence
+from datetime import datetime
+from pathlib import Path
 
 from sifr.domain.models import Project, ProjectStatus
 from sifr.ports.contracts import RepositoryPort
@@ -47,7 +47,8 @@ class SQLiteRepositoryAdapter(RepositoryPort):
 
     def save_project(self, project: Project) -> None:
         with self._get_connection() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO projects (
                     project_id, name, root_path, technology_profile_id, status, created_at, metadata_json
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -57,15 +58,17 @@ class SQLiteRepositoryAdapter(RepositoryPort):
                     technology_profile_id=excluded.technology_profile_id,
                     status=excluded.status,
                     metadata_json=excluded.metadata_json
-            """, (
-                project.project_id,
-                project.name,
-                str(project.root_path),
-                project.technology_profile_id,
-                project.status.value,
-                project.created_at.isoformat(),
-                json.dumps(project.metadata)
-            ))
+            """,
+                (
+                    project.project_id,
+                    project.name,
+                    str(project.root_path),
+                    project.technology_profile_id,
+                    project.status.value,
+                    project.created_at.isoformat(),
+                    json.dumps(project.metadata),
+                ),
+            )
             conn.commit()
 
     def get_project_by_id(self, project_id: str) -> Project | None:
@@ -97,5 +100,5 @@ class SQLiteRepositoryAdapter(RepositoryPort):
             technology_profile_id=row["technology_profile_id"],
             status=ProjectStatus(row["status"]),
             created_at=datetime.fromisoformat(row["created_at"]),
-            metadata=json.loads(row["metadata_json"])
+            metadata=json.loads(row["metadata_json"]),
         )

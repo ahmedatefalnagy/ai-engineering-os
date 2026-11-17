@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from sifr.domain.models import Project
 from sifr.ports.contracts import RepositoryPort

@@ -1,6 +1,7 @@
 """Unit tests for Core Domain Models."""
 
 from pathlib import Path
+
 from sifr.domain.models import IntegrationType, Project, ProjectStatus
 
 

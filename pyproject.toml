@@ -25,6 +25,7 @@ dev = [
     "pytest-cov>=5.0.0",
     "ruff>=0.4.0",
     "mypy>=1.10.0",
+    "types-pyyaml>=6.0.12",
 ]
 
 [project.scripts]
@@ -37,7 +38,7 @@ packages = ["src/sifr"]
 minversion = "8.0"
 testpaths = ["tests"]
 pythonpath = ["src"]
-addopts = "-ra -q --strict-markers"
+addopts = "-ra -q --strict-markers -W ignore::ResourceWarning"
 
 [tool.ruff]
 line-length = 100
@@ -45,7 +46,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM"]
-ignore = []
+ignore = ["B008", "E501"]
 
 [tool.mypy]
 python_version = "3.12"

@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
+import re
 
 
 class GateStatus(StrEnum):
@@ -45,9 +45,11 @@ class QualityGateEngine:
             (r"-----BEGIN (RSA|OPENSSH|PRIVATE) KEY-----", "Private key detected"),
         ]
 
+        ignored_dirs = {".git", ".venv", "bin", "obj", "node_modules", "vendor", ".gradle"}
         violations: list[str] = []
+
         for file_path in self.project_root.rglob("*"):
-            if not file_path.is_file() or ".git" in file_path.parts or ".venv" in file_path.parts:
+            if not file_path.is_file() or any(d in file_path.parts for d in ignored_dirs):
                 continue
 
             try:
